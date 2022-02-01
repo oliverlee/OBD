@@ -2,7 +2,7 @@
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF)
 
 # Option for building all of OBD's tests
-option(obd_build_tests "Build all of OBD's tests." ON)
+option(obd_build_tests "Build all of OBD's tests." OFF)
 
 # Option for building the bicycle GUI
 option(obd_build_gui "Build Qt4 gui tool." ON)
