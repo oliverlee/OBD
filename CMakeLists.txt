@@ -55,6 +55,7 @@ include_directories("${PROJECT_BINARY_DIR}/include")
 
 # Find GSL
 find_package(GSL REQUIRED)
+include_directories(${GSL_INCLUDE_DIR})
 
 # Directories for each bicycle model
 add_subdirectory(whipple)
