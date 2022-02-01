@@ -83,29 +83,29 @@ void Whipple::steadyCalcs(steadyOpts_t * opt)
   int ig_index;
   std::string filename;
   gsl_matrix * M = gsl_matrix_alloc(opt->N, 9);
-  gsl_vector * steer = &(gsl_matrix_column(M, 0).vector);
+  gsl_vector  steer = (gsl_matrix_column(M, 0).vector);
   for (int i = 0; i < opt->N; ++i)
-    gsl_vector_set(steer, i, delta * i);
-  gsl_vector * lean_zero = &(gsl_matrix_column(M, 1).vector);
-  gsl_vector * pitch_zero = &(gsl_matrix_column(M, 2).vector);
-  gsl_vector * lean_inf = &(gsl_matrix_column(M, 3).vector);
-  gsl_vector * pitch_inf = &(gsl_matrix_column(M, 4).vector);
-  gsl_vector * lean_min = &(gsl_matrix_column(M, 5).vector);
-  gsl_vector * pitch_min = &(gsl_matrix_column(M, 6).vector);
-  gsl_vector * lean_max = &(gsl_matrix_column(M, 7).vector);
-  gsl_vector * pitch_max = &(gsl_matrix_column(M, 8).vector);
+    gsl_vector_set(&steer, i, delta * i);
+  gsl_vector lean_zero = (gsl_matrix_column(M, 1).vector);
+  gsl_vector pitch_zero = (gsl_matrix_column(M, 2).vector);
+  gsl_vector lean_inf = (gsl_matrix_column(M, 3).vector);
+  gsl_vector pitch_inf = (gsl_matrix_column(M, 4).vector);
+  gsl_vector lean_min = (gsl_matrix_column(M, 5).vector);
+  gsl_vector pitch_min = (gsl_matrix_column(M, 6).vector);
+  gsl_vector lean_max = (gsl_matrix_column(M, 7).vector);
+  gsl_vector pitch_max = (gsl_matrix_column(M, 8).vector);
 
   // Find static equilibrium values of lean and pitch
-  ig_index = staticEq(lean_zero, pitch_zero, steer, this);
+  ig_index = staticEq(&lean_zero, &pitch_zero, &steer, this);
 
   // Find infinite speed equilibrium values of lean and pitch
-  infspeed(lean_inf, pitch_inf,
-           gsl_vector_get(lean_zero, ig_index),
-           gsl_vector_get(pitch_zero, ig_index),
-           ig_index, steer, this);
+  infspeed(&lean_inf, &pitch_inf,
+           gsl_vector_get(&lean_zero, ig_index),
+           gsl_vector_get(&pitch_zero, ig_index),
+           ig_index, &steer, this);
 
   // Find configurational limits
-  cfglim(lean_max, pitch_max, lean_min, pitch_min, steer, this);
+  cfglim(&lean_max, &pitch_max, &lean_min, &pitch_min, &steer, this);
 
   // Write boundary data to file
   filename = opt->outfolder; filename += "boundary.dat";
@@ -120,20 +120,20 @@ void Whipple::steadyCalcs(steadyOpts_t * opt)
     // Allocate a matrix with N rows, and 1 + 2 x number of iso velocity curves
     // First column stores steer, subsequent columns store lean and pitch in
     // alternating columns.
-    gsl_vector * lean_vi, * pitch_vi, * steer_vi;
+    gsl_vector lean_vi, pitch_vi, steer_vi;
     gsl_matrix * Mv = gsl_matrix_alloc(opt->N, 1 + 2*opt->iso_v->size);
 
     for (int i = 0; i < opt->N; ++i)
       gsl_matrix_set(Mv, i, 0, delta * i);
-    steer_vi = &(gsl_matrix_column(Mv, 0).vector);
+    steer_vi = (gsl_matrix_column(Mv, 0).vector);
 
     for (unsigned int i = 0; i < opt->iso_v->size; ++i) {
-      lean_vi = &(gsl_matrix_column(Mv, 2*i + 1).vector);
-      pitch_vi = &(gsl_matrix_column(Mv, 2*i + 2).vector);
+      lean_vi = (gsl_matrix_column(Mv, 2*i + 1).vector);
+      pitch_vi = (gsl_matrix_column(Mv, 2*i + 2).vector);
       q1 = q3 = 0;
-      q2 = gsl_vector_get(pitch_zero, 0);
+      q2 = gsl_vector_get(&pitch_zero, 0);
       u5 = -gsl_vector_get(opt->iso_v, i) / (rf + rft);
-      cv(lean_vi, pitch_vi, steer_vi, this);
+      cv(&lean_vi, &pitch_vi, &steer_vi, this);
     } // for i
 
     filename = opt->outfolder; filename += "iso_velocity.dat";
